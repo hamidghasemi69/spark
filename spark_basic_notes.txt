@@ -1,0 +1,73 @@
+python3 -m IPython notebook 
+
+***********
+from pysparksql import SparkSession
+spark = SparkSession.builder.appName('hamid').getOrcreate()
+df = spark.read.csv('apple.csv',header = True, inferSchema = True)
+
+*********If you wanna read a column hamid
+df.select('hamid').show()
+
+*********** Making a new column
+df.withColumn('Year', value).show()
+
+
+*********** How to get the schema of a datafrane
+
+df.printSchema()
+
+
+********  How to get the top N rows
+
+df.head(N)
+
+
+****** How to make a new column with the ration of two columns:
+
+df_new = df.withColumn('New_Column', df['High']/df['Low'])
+
+
+*******Filter***********
+
+
+
+result = df.filter((df['low']==197) & (df['high']==200)).collect()
+
+.collect() for getting data and .show() for showing the data
+
+row = result[0]
+row.asDict()['Volume']
+ 
+******************GroupBy*****************
+
+df.groupBy('Compnay').mean().show()
+
+***************Take the average of one columns*********
+
+from pyspark.sql.functions import countDistinct, avg, stddev
+
+df.select(avg('Sales')).show()
+
+---- This is the pattern for using a function over a column
+
+
+************* Maximum and minimum over a column
+
+df.agg({"COLUMN": "max"}).show()
+df.agg({"COLUMN": "min"}).show()
+
+
+********** Finding the shape of the dataframe
+
+df[df['Close'] < 60].count()
+
+
+****** Correlation between two columns in dataframe
+
+from pyspark.sql.functions import corr
+df.select(corr('Volume', 'High')).show() OR df.select(corr(df['Volume'], df['High'])).show() 
+
+******************************
+
+df.dropna(thresh=2).show()
+df.dropna(how='any').show()
